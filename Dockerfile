@@ -2,10 +2,16 @@ FROM osrf/ros:noetic-desktop-full
 # FROM pachyderm/opencv
 
 # YOU should replace your_os_user with your actual system user
+ARG USER_UID=1000
+ARG USER_GID=1000
 ARG USER=your_os_user
 ARG DEBIAN_FRONTEND=noninteractive
 
 SHELL ["/bin/bash", "-c"]
+
+RUN groupadd --gid $USER_GID $USER \
+    && useradd --uid $USER_UID --gid $USER_GID -m $USER \
+    && echo "$USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 RUN apt-get update && apt-get install -y \
     git \
@@ -26,7 +32,7 @@ RUN apt-get update && apt-get install -y \
     ros-noetic-roboticsgroup-upatras-gazebo-plugins \
     ros-noetic-actionlib-tools \
     && rm -rf /var/lib/apt/lists/*
-
+    
 # BASE END CONFIG
 WORKDIR /home/${USER}
 
