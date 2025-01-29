@@ -40,7 +40,7 @@ docker-compose build
 
 ## Running the Container
 
-> **Note:** If you are using without NVIDIA GPU, check the comments in the [Dockerfile](./Dockerfile) and make the corresponding changes before you start the container.
+> **Note:** If you are using without NVIDIA GPU, check the comments in the [Docker Compose](./docker-compose.yaml) file and make the corresponding changes before you start the container.
 
 Start the container using Docker Compose:
 
