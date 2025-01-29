@@ -1,121 +1,60 @@
-### 🚢 Running Your First ROS Node Through a Docker Container
-This guide outlines the steps to run your first ROS node through a Docker container. The Docker container is pre-configured with Ubuntu 20.04 and ROS Noetic.
+# ROS Noetic Docker
 
-*Based on: [Docker container with pre-installed Ubuntu20.04 and ROS Noetic](https://medium.com/@sepideh.92sh/how-docker-revolutionizes-application-development-a-comprehensive-guide-for-beginners-fc2d3e53eb31)*
+This repository helps in running ROS Noetic on non-supported devices. It has been tested on Ubuntu 22 and 24. It has not been tested on Windows and Mac.
 
-### Docker Container Information
-- **Base Image**: Ubuntu 20.04
-- **ROS Distribution**: Noetic
+## Prerequisites
 
-### Prerequisites
-- Docker and docker compose installed on your system. You can check if Docker is installed by running `docker --version` in your terminal.
+- Docker installed. Follow the instructions [here](https://docs.docker.com/get-docker/).
+- On Linux, make sure to follow the Docker post-install steps [here](https://docs.docker.com/engine/install/linux-postinstall/).
 
-### Steps
+## Building the Docker Image
 
-#### 1. Clone the Repository
-Clone the repository containing the Dockerfile:
+### With NVIDIA GPU (Linux only)
+
+If you have an NVIDIA GPU, ensure you have the correct drivers installed and test them:
 
 ```bash
-   git clone git@github.com:Suyannesara/ROS-noetic-docker.git
-   cd ROS-noetic-docker
+nvidia-smi
 ```
 
-#### 2. Build the Docker Image
+If `nvidia-smi` is not found, install the NVIDIA drivers. Follow the instructions [here](https://ubuntu.com/server/docs/nvidia-drivers-installation).
 
-The Dockerfile provided in this project defines an image with ROS Noetic installed.
+Next, install NVIDIA Container Toolkit and configure the runtime. Follow the instructions [here](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
 
-**Modify your bashrc file to source ros1 i
+### Building the Image
 
-**Modify the Dockerfile to use your system user:**
-
-Then, build the image by running the following command in your terminal:
-```Dockerfile
-ARG USER=your_os_user
-```
-⚠️ **Warning**: Ensure to replace `your_os_user` with your actual system username. Also, make sure you are inside this project's root folder to run the next commands.
-
-#### 3. Run the Container
-
-Run the container based on the defined image using the following commands:
+Use Docker Compose to build the image:
 
 ```bash
-   sudo docker compose up -d
+docker-compose build
 ```
-It is normal if it takes long to build for the first time!
 
-##### 3.1 Start multiple docker terminals
+## Running the Container
 
-Once you've done the steps till now, your docker container is running on your machine in the background, so that you are able to open multiple instances of the container with the command:
+>Note: If you are using without NVIDIA GPU check the comments in the [Dockerfile](./Dockerfile) and make the corresponding changes before you start the container.
+
+Start the container using Docker Compose:
 
 ```bash
-   sudo docker exec -it ros-noetic-container /bin/bash
+docker-compose up -d
 ```
 
-This will open your container work around.
+## Accessing the Container
 
-
-#### 4. Run Gazebo inside docker container
-In a terminal OUTSIDE the container one, run:
-```bash
-   xhost +local:docker
-```
-
-Then, gazebo will be able to launch any ways you need. You can check by pasting the comand above INSIDE container terminal:
-```bash
-   gazebo
-```
-
-#### 5. Run Your First ROS1 Node
-
-##### 5.1 Run `roscore`
-The comands above are necessary in order to source ros1 itens. Whenever you use roscore, you are going to need to execute these lines first. In your terminal, paste:
+To execute into the container in another terminal:
 
 ```bash
-   echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
-   echo "source /opt/ros/noetic/setup.sh" >> ~/.bashrc
-   source ~/.bashrc
+docker exec -it ros-noetic-container bash
 ```
 
-Inside a container terminal instance, run the following command to start `roscore`:
+## Running RViz
+
+To check if the GUI is working from the container, run:
 
 ```bash
-   roscore
+source /opt/ros/noetic/setup.bash
+rviz
 ```
-
-
-### BONUS
-##### Run the Turtlesim Node
-In a terminal OUTSIDE the container one, run the command above if have not done it yet:
-```bash
-   xhost +local:docker
-```
-
-In another docker container terminal instance (that you can open with the command in section 4.1), run the following command to start the Turtlesim node:
-
-```bash
-   rosrun turtlesim turtlesim_node
-```
-
-(Do not close the window with `roscore` running; they both should be opened)
-
-
-This should open a window displaying the Turtlesim environment like this:
-
-![Turtlesim window](./turtlesimWindow.png)
-
-##### 4.4 Control the Turtle
-In another docker container instance terminal tab, run the following command to control the turtle using keyboard inputs:
-
-```bash
-   rosrun turtlesim turtle_teleop_key
-```
-
-### Final Look:
-
-Just to clarify, at the end of the process, you should have something like this, with 3 terminal tabs open, 2 of them taking care of running two different nodes, and the other running the roscore environment, necessary for running the nodes.
-
-![Final Look](finalLook.png)
-
-**You can exit each docker terminal instance by typing "exit"**
-
-🎉 **All done**: Now, you can use the arrow keys on your keyboard to control the movement of the turtle in the Turtlesim environment.
+>Note: Make sure to run rosmaster using `roscore` in another terminal before you run rviz or any nodes.
+ 
+This should open the RViz GUI.

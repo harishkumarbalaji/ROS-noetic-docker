@@ -1,10 +1,8 @@
 FROM osrf/ros:noetic-desktop-full
-# FROM pachyderm/opencv
 
-# YOU should replace your_os_user with your actual system user
 ARG USER_UID=1000
 ARG USER_GID=1000
-ARG USER=your_os_user
+ARG USER=$(whoami)
 ARG DEBIAN_FRONTEND=noninteractive
 
 SHELL ["/bin/bash", "-c"]

@@ -7,6 +7,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        USER: ${USER}
     stdin_open: true
     tty: true
     volumes:
@@ -14,11 +16,19 @@ services:
       - "/etc/passwd:/etc/passwd:ro"
       - "/etc/shadow:/etc/shadow:ro"
       - "/etc/sudoers.d:/etc/sudoers.d:ro"
-      - "/home:/home"
-      - "~/Volumes:/home/usr"
+      - "~:/home/${USER}/host"
     environment:
-      - DISPLAY=:0
-      - LIBGL_ALWAYS_SOFTWARE=1
-    network_mode: "host"
+      - DISPLAY=${DISPLAY}
+      # - LIBGL_ALWAYS_SOFTWARE=1 # Uncomment if you want to use software rendering (No GPU)
+    network_mode: host
+    ipc: host
     user: "${USER}:${USER}"
+    # Comment the following lines if you want to use Nvidia GPU
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all # alternatively, use `count: all` for all GPUs
+              capabilities: [gpu]
 
