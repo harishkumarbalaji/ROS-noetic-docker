@@ -1,4 +1,4 @@
-# ROS Noetic Docker
+# ROS Noetic Docker with GUI
 
 This repository helps in running ROS Noetic on non-supported devices. It has been tested on Ubuntu 22 and 24. It has not been tested on Windows and Mac.
 
